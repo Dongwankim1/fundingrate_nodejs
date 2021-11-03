@@ -9,7 +9,7 @@ var rateSchema = new Schema({
     Huobi:String,
     Gate:String,
     Bitget:String,
-    frstDate:{type:Date,default:new Date.now}
+    frstDate:{type:Date,default:new Date().now}
 
 })
 
