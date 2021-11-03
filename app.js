@@ -21,7 +21,10 @@ setInterval(()=>{
       height: 768
     });
     // "https://www.goodchoice.kr/product/search/2" URL에 접속한다. (여기어때 호텔 페이지)
-    await page.goto("https://www.coinglass.com/FundingRate");
+    await page.goto("https://www.coinglass.com/FundingRate",{
+      waitUntil:'load',
+      timeout:0
+    });
     
     
     const content = await page.content();
@@ -53,4 +56,4 @@ setInterval(()=>{
     browser.close();
     
   })();
-},30000);
+},300000);
