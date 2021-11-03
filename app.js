@@ -30,7 +30,8 @@ setInterval(()=>{
     const content = await page.content();
 
     const $ = cheerio.load(content);
-
+    page.close();
+    browser.close();
     const lists = $("#ufr");
     var ratemodel = new rate();
     var nIndex = 0;
@@ -53,7 +54,7 @@ setInterval(()=>{
 
   });
     
-    browser.close();
+    
     
   })();
 },300000);
