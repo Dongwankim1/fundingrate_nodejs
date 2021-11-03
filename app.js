@@ -12,7 +12,7 @@ db.once('open',function(){
 
 mongoose.connect('mongodb://localhost:27017/db_fundingrate');
 var rate = require('./models/rate');
-
+setInterval(()=>{
   (async () => {
     const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
@@ -53,4 +53,4 @@ var rate = require('./models/rate');
     browser.close();
     
   })();
-  
+},30000);
