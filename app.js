@@ -15,16 +15,16 @@ db.once('open',function(){
 });
 process.env.TZ = 'Asia/Seoul';
 
-
-const moment = require('moment-timezone');
+var browser;
+var page;
 
 mongoose.connect('mongodb://localhost/db_fundingrate');
 var rate = require('./models/rate');
 setInterval(()=>{
   (async () => {
     try {
-    const browser = await puppeteer.launch({headless: false});
-    const page = await browser.newPage();
+    browser = await puppeteer.launch({headless: false});
+    page = await browser.newPage();
     await page.setViewport({
       width: 1366,
       height: 768
@@ -34,10 +34,8 @@ setInterval(()=>{
       waitUntil:'load',
       timeout:0
     });
-  }catch(error){
-    return;
-  }
-    try {
+ 
+    
       const content = await page.content();
 
       const $ = cheerio.load(content);
@@ -51,33 +49,31 @@ setInterval(()=>{
           var data = node.children[0].childNodes[0].children[0].data;
           ratemodel[column[nIndex++]]=data;
       }
-      var c = moment().tz("Asia/Seoul");
 
-
-      console.log(c);
 
 
       ratemodel.save(function(err){
         if(err){
             console.error(err);
-  
+            page.close();
+            browser.close()
             return;
         }
       });
     } catch (error) {
+      page.close();
+      browser.close()
       console.error(error);
     }
   
-    try {
+    
       page.close();
     browser.close();
-    } catch (error) {
-      return;
-    }
+  
       
   
     
     
     
   })();
-},6000);
+},300000);
