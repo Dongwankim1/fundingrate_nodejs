@@ -4,6 +4,10 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 const puppeteer = require("puppeteer");
 const cheerio = require('cheerio');
+const router = express.Router();
+
+
+
 var db = mongoose.connection;
 db.on('error',console.error);
 db.once('open',function(){
@@ -18,6 +22,7 @@ mongoose.connect('mongodb://localhost/db_fundingrate');
 var rate = require('./models/rate');
 setInterval(()=>{
   (async () => {
+    try {
     const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
     await page.setViewport({
@@ -29,7 +34,9 @@ setInterval(()=>{
       waitUntil:'load',
       timeout:0
     });
-    
+  }catch(error){
+    return;
+  }
     try {
       const content = await page.content();
 
@@ -61,9 +68,13 @@ setInterval(()=>{
       console.error(error);
     }
   
-
+    try {
       page.close();
     browser.close();
+    } catch (error) {
+      return;
+    }
+      
   
     
     
