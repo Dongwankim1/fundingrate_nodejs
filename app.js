@@ -9,8 +9,12 @@ db.on('error',console.error);
 db.once('open',function(){
   console.log("Connected to mongodb server")
 });
+process.env.TZ = 'Asia/Seoul';
 
-mongoose.connect('mongodb://localhost:27017/db_fundingrate');
+
+const moment = require('moment-timezone');
+
+mongoose.connect('mongodb://localhost/db_fundingrate');
 var rate = require('./models/rate');
 setInterval(()=>{
   (async () => {
@@ -26,35 +30,43 @@ setInterval(()=>{
       timeout:0
     });
     
-    
-    const content = await page.content();
+    try {
+      const content = await page.content();
 
-    const $ = cheerio.load(content);
-    page.close();
-    browser.close();
-    const lists = $("#ufr");
-    var ratemodel = new rate();
-    var nIndex = 0;
-    var column = ['binance','Okex','Bybit','FTX','Huobi','Gate','Bitget'];
-    for(let i =0;i < lists[0].children[0].children.length;i++){
-        var node = lists[0].children[0].children[i]
-        var data = node.children[0].childNodes[0].children[0].data;
-        ratemodel[column[nIndex++]]=data;
-    }
-
-   
-    
-    ratemodel.save(function(err){
-      if(err){
-          console.error(err);
-
-          return;
+      const $ = cheerio.load(content);
+      
+      const lists = $("#ufr");
+      var ratemodel = new rate();
+      var nIndex = 0;
+      var column = ['binance','Okex','Bybit','FTX','Huobi','Gate','Bitget'];
+      for(let i =0;i < lists[0].children[0].children.length;i++){
+          var node = lists[0].children[0].children[i]
+          var data = node.children[0].childNodes[0].children[0].data;
+          ratemodel[column[nIndex++]]=data;
       }
+      var c = moment().tz("Asia/Seoul");
 
 
-  });
+      console.log(c);
+
+
+      ratemodel.save(function(err){
+        if(err){
+            console.error(err);
+  
+            return;
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  
+
+      page.close();
+    browser.close();
+  
     
     
     
   })();
-},300000);
+},6000);

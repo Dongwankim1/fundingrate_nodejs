@@ -1,6 +1,12 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+
+process.env.TZ = 'Asia/Seoul';
+
+const moment = require('moment-timezone');
+
+
 var rateSchema = new Schema({
     binance:String,
     Okex:String,
@@ -9,7 +15,7 @@ var rateSchema = new Schema({
     Huobi:String,
     Gate:String,
     Bitget:String,
-    frstDate:{type:Date,default:Date.now}
+    frstDate:{type:Date,required: true, default: () => moment().add(9,'h')}
 
 })
 
